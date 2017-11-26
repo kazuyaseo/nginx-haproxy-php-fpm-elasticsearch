@@ -1,0 +1,59 @@
+version: "3"
+services:
+  # LB Proxy:HAProxy
+  lb:
+    build: ./haproxy
+    volumes:
+      - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+    links:
+      - web1
+    ports:
+      - '80:80'
+
+  # WebServer:Nginx
+  web1:
+    build: ./nginx1
+    volumes:
+      - ../html/:/var/www/html/
+      - ./nginx1/defailt.conf:/etc/nginx/conf.d/default.conf
+    links:
+      - app:php-fpm7
+
+  # AppServer:PHP-FPM
+  app:
+    build: ./php-fpm7
+    environment:
+      DATABASE_HOST:     'db'
+      DATABASE_NAME:     'mysql_database'
+      DATABASE_USER:     'mysql_user'
+      DATABASE_PASSWORD: 'mysql_password'
+    links:
+      - db
+      - search
+    volumes:
+      - ./html/:/var/www/html
+
+  # Database:MySQL
+  db:
+    build: ./mysql
+    restart: always
+    volumes:
+        - ./mysql/var/lib/mysql:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 'secret_password'
+      MYSQL_DATABASE:      'mysql_database'
+      MYSQL_USER:          'mysql_user'
+      MYSQL_PASSWORD:      'mysql_password'
+    ports:
+        - "13306:3306"
+
+  # SearchEngine:ElasticSearch
+  search:
+    build: ./elasticsearch
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - ./elasticsearch/data/:/usr/share/elasticsearch/data/ 
+
+  
