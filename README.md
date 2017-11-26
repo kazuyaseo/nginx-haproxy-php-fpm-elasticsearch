@@ -1,5 +1,3 @@
-# Nginx-HAproxy-PHPFPM7-ElasticSearch
-
-Nginx-HAproxy-PHPFPM7-ElasticSearch
-
 # nginx-haproxy-php-fpm-elasticsearch
+
+Nginx-HAproxy-PHP-FPM7-ElasticSearch
